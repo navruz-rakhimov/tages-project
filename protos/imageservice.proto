@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package imageservice;
+
+option go_package="github.com/navruz-rakhimov/tages-project;protos";
+
+service ImageService {
+    rpc UploadImage (stream UploadImageRequest) returns (UploadImageResponse) {} 
+}
+
+message UploadImageRequest {
+    oneof data {
+        ImageInfo info = 1;
+        bytes chunk_data = 2;
+    };
+}
+
+message ImageInfo {
+    string image_type = 1;
+}
+
+message UploadImageResponse {
+    string id = 1;
+    uint32 size = 2;
+}
+
+message ImageFullInfo {
+    string image_name = 1;
+    string created_at = 2;
+    string updated_at = 3;
+}
