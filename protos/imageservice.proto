@@ -17,11 +17,13 @@ message UploadImageRequest {
 
 message ImageInfo {
     string image_type = 1;
+    string image_name = 2;
 }
 
 message UploadImageResponse {
     string id = 1;
-    uint32 size = 2;
+    string image_name = 2;
+    uint32 size = 3;
 }
 
 message ImageFullInfo {

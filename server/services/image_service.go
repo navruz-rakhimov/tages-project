@@ -34,6 +34,7 @@ func (server *ImageServer) UploadImage(stream pb.ImageService_UploadImageServer)
 	}
 
 	imageType := req.GetInfo().GetImageType()
+	imageName := req.GetInfo().GetImageName()
 	log.Printf("receive an upload-image request for image with type %s", imageType)
 
 	imageData := bytes.Buffer{}
@@ -70,7 +71,7 @@ func (server *ImageServer) UploadImage(stream pb.ImageService_UploadImageServer)
 		}
 	}
 
-	imageID, err := server.imageStore.Save(imageType, imageData)
+	imageID, err := server.imageStore.Save(imageName, imageType, imageData)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "cannot save image to the store: %v", err))
 	}
@@ -85,7 +86,7 @@ func (server *ImageServer) UploadImage(stream pb.ImageService_UploadImageServer)
 		return logError(status.Errorf(codes.Unknown, "cannot send response: %v", err))
 	}
 
-	log.Printf("saved image with id: %s, size: %d", imageID, imageSize)
+	log.Printf("saved image with name: %s, size: %d", imageName, imageSize)
 	return nil
 }
 

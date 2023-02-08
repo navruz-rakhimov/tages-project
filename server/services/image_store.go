@@ -10,7 +10,7 @@ import (
 )
 
 type ImageStore interface {
-	Save(imageType string, imageData bytes.Buffer) (string, error)
+	Save(imageName string, imageType string, imageData bytes.Buffer) (string, error)
 }
 
 type DiskImageStore struct {
@@ -26,13 +26,13 @@ func NewDiskImageStore(imageFolder string) *DiskImageStore {
 	}
 }
 
-func (store *DiskImageStore) Save(imageType string, imageData bytes.Buffer) (string, error) {
+func (store *DiskImageStore) Save(imageName string, imageType string, imageData bytes.Buffer) (string, error) {
 	imageID, err := uuid.NewRandom()
 	if err != nil {
 		return "", fmt.Errorf("cannot generate image id: %w", err)
 	}
 
-	imagePath := fmt.Sprintf("%s/%s%s", store.imageFolder, imageID, imageType)
+	imagePath := fmt.Sprintf("%s/%s", store.imageFolder, imageName)
 
 	file, err := os.Create(imagePath)
 	if err != nil {
