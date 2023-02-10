@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ImageServiceClient interface {
 	UploadImage(ctx context.Context, opts ...grpc.CallOption) (ImageService_UploadImageClient, error)
+	GetImageInfoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetImageInfoListResponse, error)
 }
 
 type imageServiceClient struct {
@@ -67,11 +68,21 @@ func (x *imageServiceUploadImageClient) CloseAndRecv() (*UploadImageResponse, er
 	return m, nil
 }
 
+func (c *imageServiceClient) GetImageInfoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetImageInfoListResponse, error) {
+	out := new(GetImageInfoListResponse)
+	err := c.cc.Invoke(ctx, "/imageservice.ImageService/GetImageInfoList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImageServiceServer is the server API for ImageService service.
 // All implementations must embed UnimplementedImageServiceServer
 // for forward compatibility
 type ImageServiceServer interface {
 	UploadImage(ImageService_UploadImageServer) error
+	GetImageInfoList(context.Context, *Empty) (*GetImageInfoListResponse, error)
 	mustEmbedUnimplementedImageServiceServer()
 }
 
@@ -81,6 +92,9 @@ type UnimplementedImageServiceServer struct {
 
 func (UnimplementedImageServiceServer) UploadImage(ImageService_UploadImageServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadImage not implemented")
+}
+func (UnimplementedImageServiceServer) GetImageInfoList(context.Context, *Empty) (*GetImageInfoListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetImageInfoList not implemented")
 }
 func (UnimplementedImageServiceServer) mustEmbedUnimplementedImageServiceServer() {}
 
@@ -121,13 +135,36 @@ func (x *imageServiceUploadImageServer) Recv() (*UploadImageRequest, error) {
 	return m, nil
 }
 
+func _ImageService_GetImageInfoList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImageServiceServer).GetImageInfoList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/imageservice.ImageService/GetImageInfoList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImageServiceServer).GetImageInfoList(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ImageService_ServiceDesc is the grpc.ServiceDesc for ImageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ImageService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "imageservice.ImageService",
 	HandlerType: (*ImageServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetImageInfoList",
+			Handler:    _ImageService_GetImageInfoList_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "UploadImage",

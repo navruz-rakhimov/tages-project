@@ -27,6 +27,18 @@ func NewImageServer(imageStore ImageStore) *ImageServer {
 	}
 }
 
+func (server *ImageServer) GetImageInfoList(ctx context.Context, _ *pb.Empty) (*pb.GetImageInfoListResponse, error) {
+	imageFullInfoList, err := server.imageStore.GetImagesInfoList()
+	if err != nil {
+		log.Fatal("Could get full image info list from image store: ", err)
+		return nil, err
+	}
+
+	return &pb.GetImageInfoListResponse{
+		ImageInfos: imageFullInfoList,
+	}, nil
+}
+
 func (server *ImageServer) UploadImage(stream pb.ImageService_UploadImageServer) error {
 	req, err := stream.Recv()
 	if err != nil {

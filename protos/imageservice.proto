@@ -6,6 +6,7 @@ option go_package="github.com/navruz-rakhimov/tages-project;protos";
 
 service ImageService {
     rpc UploadImage (stream UploadImageRequest) returns (UploadImageResponse) {} 
+    rpc GetImageInfoList (Empty) returns (GetImageInfoListResponse) {}
 }
 
 message UploadImageRequest {
@@ -24,6 +25,12 @@ message UploadImageResponse {
     string id = 1;
     string image_name = 2;
     uint32 size = 3;
+}
+
+message Empty {}
+
+message GetImageInfoListResponse {
+    repeated ImageFullInfo ImageInfos = 1;
 }
 
 message ImageFullInfo {

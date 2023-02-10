@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -16,6 +17,7 @@ const (
 
 func main() {
 	currentDir, _ := os.Getwd()
+	fmt.Println(currentDir)
 	tmpDir := currentDir + "\\server\\tmp"
 
 	imageStore := services.NewDiskImageStore(tmpDir)
