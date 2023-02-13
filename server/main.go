@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -12,16 +11,17 @@ import (
 )
 
 const (
-	port = ":5001"
+	port           = ":5001"
+	maxReadConns   = 100
+	maxStreamConns = 10
 )
 
 func main() {
 	currentDir, _ := os.Getwd()
-	fmt.Println(currentDir)
 	tmpDir := currentDir + "\\server\\tmp"
 
 	imageStore := services.NewDiskImageStore(tmpDir)
-	imageServer := services.NewImageServer(imageStore)
+	imageServer := services.NewImageServer(imageStore, maxReadConns, maxStreamConns)
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
